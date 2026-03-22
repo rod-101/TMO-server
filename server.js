@@ -20,6 +20,13 @@ app.post("/", (req, res) => {
   res.json({ message: "Hello from the backend!" });
 });
 
+app.post("/api/change-password", async (req, res) => {
+  const [rows] = await db.query(
+    "UPDATE admins SET password = 'adminNewPass' WHERE username = 'admin'",
+  );
+  console.log("password was changed.");
+});
+
 //Login route for admin
 app.post("/api/admin-login", async (req, res) => {
   const { username, password } = req.body;
