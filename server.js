@@ -5,10 +5,6 @@ import db from "./db.js";
 const app = express();
 app.use(express.json());
 
-// const corsOptions = {
-//   origin: ["http://localhost:5173"], // Replace with your frontend URL
-// };
-
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -20,6 +16,7 @@ app.listen(8080, () => {
   console.log("Server is running on port 8080");
 });
 
+//Login route for admin
 app.post("/api/admin-login", async (req, res) => {
   const { username, password } = req.body;
 
