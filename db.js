@@ -4,11 +4,11 @@ dotenv.config();
 
 async function initDB() {
   const connection = await mysql.createConnection({
-    host: process.env.MYSQL_HOST,
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    port: parseInt(process.env.MYSQL_PORT, 10),
-    database: process.env.MYSQL_DATABASE,
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    port: parseInt(process.env.MYSQLPORT, 10),
+    database: process.env.MYSQLDATABASE,
   });
 
   return connection;
