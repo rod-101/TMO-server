@@ -4,7 +4,7 @@ import db from "./db.js";
 
 const app = express();
 app.use(express.json());
-
+const PORT = process.env.PORT || 8080;
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -12,8 +12,12 @@ app.use(
   }),
 );
 
-app.listen(8080, () => {
-  console.log("Server is running on port 8080");
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+app.post("/", (req, res) => {
+  res.json({ message: "Hello from the backend!" });
 });
 
 //Login route for admin
