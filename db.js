@@ -1,12 +1,12 @@
-import mysql from "mysql2/promise"; // Use the promise-based version of mysql2
+import mysql from "mysql2/promise";
 import dotenv from "dotenv";
-dotenv.config(); // Load environment variables from .env file
+dotenv.config();
 
 const connection = await mysql.createConnection({
-  host: "localhost", // mysql host
-  user: "root", // mysql username
-  password: "mysqlPass", // mysql password
-  database: "tmo_system", //database name
+  host: process.env.MYSQL_HOST,
+  user: process.env.MYSQL_USER,
+  password: process.env.MYSQL_PASSWORD,
+  database: process.env.MYSQL_DATABASE,
 });
 
-export default connection; // Export the connection for use in other files
+export default connection;
