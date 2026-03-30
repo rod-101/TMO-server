@@ -21,7 +21,7 @@ export const client = new Client({
   user: process.env.RENDER_USER,
   password: process.env.RENDER_PASSWORD,
   database: process.env.RENDER_DATABASE,
-  port: parseInt(process.env.RENDER_PORT, 10),
+  port: parseInt(process.env.PORT, 10),
   ssl: {
     rejectUnauthorized: false,
   },
