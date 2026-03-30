@@ -1,18 +1,28 @@
-import mysql from "mysql2/promise";
+// import mysql from "mysql2/promise";
+import pkg from "pg";
+const { Client } = pkg;
 import dotenv from "dotenv";
 dotenv.config();
 
-async function initDB() {
-  const connection = await mysql.createConnection({
-    host: process.env.RENDER_HOST,
-    user: process.env.RENDER_USER,
-    password: process.env.RENDER_PASSWORD,
-    port: parseInt(process.env.RENDER_PORT, 10),
-    database: process.env.RENDER_DATABASE,
-  });
+// export async function initDB() {
+//   const connection = await mysql.createConnection({
+//     host: process.env.LOCALHOST,
+//     user: process.env.LOCALUSERNAME,
+//     password: "",
+//     port: parseInt(process.env.LOCALPORT, 10),
+//     database: process.env.LOCALDATABASE,
+//   });
 
-  return connection;
-}
+//   return connection;
+// }
 
-const connection = await initDB(); // now dotenv is guaranteed loaded
-export default connection;
+export const client = new Client({
+  host: process.env.RENDER_HOST,
+  user: process.env.RENDER_USER,
+  password: process.env.RENDER_PASSWORD,
+  database: process.env.RENDER_DATABASE,
+  port: parseInt(process.env.RENDER_PORT, 10),
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});

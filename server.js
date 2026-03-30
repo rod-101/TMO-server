@@ -1,10 +1,10 @@
 import express from "express";
 import cors from "cors";
-import db from "./db.js";
+import { client } from "./db.js";
 
 const app = express();
 app.use(express.json());
-const PORT = process.env.RENDER_PORT || 8080;
+// const PORT = process.env.LOCALPORT;
 app.use(
   cors({
     origin: "http://localhost:5173",
@@ -12,8 +12,8 @@ app.use(
   }),
 );
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(process.env.RENDER_PORT, () => {
+  console.log(`Server is running on port ${process.env.RENDER_PORT}`);
 });
 
 app.post("/", (req, res) => {
@@ -21,7 +21,7 @@ app.post("/", (req, res) => {
 });
 
 app.post("/api/change-password", async (req, res) => {
-  const [rows] = await db.query(
+  const [rows] = await client.query(
     "UPDATE admins SET password = 'adminNewPass' WHERE username = 'admin'",
   );
   console.log("password was changed.");
@@ -31,7 +31,7 @@ app.post("/api/change-password", async (req, res) => {
 app.post("/api/admin-login", async (req, res) => {
   const { username, password } = req.body;
 
-  const [rows] = await db.query(
+  const [rows] = await client.query(
     "SELECT * FROM admin WHERE username = ? AND password = ?",
     [username, password],
   );
