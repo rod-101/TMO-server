@@ -4,7 +4,7 @@ import db from "./db.js";
 
 const app = express();
 app.use(express.json());
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.RENDER_PORT || 8080;
 app.use(
   cors({
     origin: "http://localhost:5173",
