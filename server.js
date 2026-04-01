@@ -5,12 +5,7 @@ import { client } from "./db.js";
 const app = express();
 app.use(express.json());
 // const PORT = process.env.LOCALPORT;
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-  }),
-);
+app.use(cors());
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
