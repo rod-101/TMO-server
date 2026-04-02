@@ -27,7 +27,7 @@ app.post("/api/admin-login", async (req, res) => {
   const { username, password } = req.body;
 
   const result = await client.query(
-    "SELECT * FROM admin WHERE username = $1 AND password = $2",
+    "SELECT * FROM admins WHERE username = $1 AND password = $2",
     [username, password],
   );
 
