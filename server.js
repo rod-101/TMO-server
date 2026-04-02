@@ -6,6 +6,7 @@ const app = express();
 app.use(express.json());
 // const PORT = process.env.LOCALPORT;
 app.use(cors());
+await client.connect();
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
@@ -26,12 +27,12 @@ app.post("/api/change-password", async (req, res) => {
 app.post("/api/admin-login", async (req, res) => {
   const { username, password } = req.body;
 
-  const [rows] = await client.query(
-    "SELECT * FROM admin WHERE username = ? AND password = ?",
+  const result = await client.query(
+    "SELECT * FROM admin WHERE username = $1 AND password = $2",
     [username, password],
   );
 
-  const admin = rows[0];
+  const admin = result.rows[0];
 
   if (!admin) {
     return res
