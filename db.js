@@ -5,15 +5,13 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const client = new Client({
-  host: process.env.RENDER_HOST,
-  user: process.env.RENDER_USER,
-  password: process.env.RENDER_PASSWORD,
-  database: process.env.RENDER_DATABASE,
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false,
   },
 });
+
+await client.connect();
 
 // export async function initDB() {
 //   const connection = await mysql.createConnection({
