@@ -62,3 +62,26 @@ app.post("/tickets", async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
+
+app.put("/tickets/:id", async (req, res) => {
+  const { id } = req.params;
+  const updatedRecord = req.body;
+  try {
+    await pool.query(
+      `UPDATE tickets SET ticket_id=$1, name=$2, type=$3, date=$4, total=$5, status=$6 WHERE id=$7`,
+      [
+        updatedRecord.ticket_id,
+        updatedRecord.name,
+        updatedRecord.type,
+        updatedRecord.date,
+        updatedRecord.total,
+        updatedRecord.status,
+        id,
+      ],
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Database update failed" });
+  }
+});
