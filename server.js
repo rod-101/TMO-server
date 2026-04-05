@@ -67,7 +67,7 @@ app.put("/tickets/:id", async (req, res) => {
   const { id } = req.params;
   const updatedRecord = req.body;
   try {
-    await pool.query(
+    await client.query(
       `UPDATE tickets SET ticket_id=$1, name=$2, type=$3, date=$4, total=$5, status=$6 WHERE id=$7`,
       [
         updatedRecord.ticket_id,
