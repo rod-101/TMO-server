@@ -87,3 +87,41 @@ app.put("/tickets/:id", async (req, res) => {
     res.status(500).json({ error: "Database update failed" });
   }
 });
+
+app.get("/api/dashboard-stats", async (req, res) => {
+  try {
+    const issuedTickets = await client.query("SELECT COUNT(*) FROM tickets");
+
+    const unresolvedTickets = await client.query(
+      "SELECT COUNT(*) FROM tickets WHERE status = 'unresolved'",
+    );
+
+    const newTickets = await client.query(
+      "SELECT COUNT(*) FROM tickets WHERE date = CURRENT_DATE",
+    );
+
+    const motorcycles = await client.query(
+      "SELECT COUNT(*) FROM tickets WHERE vehicle_type = 'motorcycle'",
+    );
+
+    const tricycles = await client.query(
+      "SELECT COUNT(*) FROM tickets WHERE vehicle_type = 'tricycle'",
+    );
+
+    const cars = await client.query(
+      "SELECT COUNT(*) FROM tickets WHERE vehicle_type = 'car'",
+    );
+
+    res.json({
+      issued: issuedTickets.rows[0].count,
+      unresolved: unresolvedTickets.rows[0].count,
+      new: newTickets.rows[0].count,
+      motorcycles: motorcycles.rows[0].count,
+      tricycles: tricycles.rows[0].count,
+      cars: cars.rows[0].count,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Database error" });
+  }
+});
