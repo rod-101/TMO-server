@@ -88,7 +88,7 @@ app.put("/tickets/:id", async (req, res) => {
   }
 });
 
-app.get("/api/dashboard-stats", async (req, res) => {
+app.get("/dashboard-stats", async (req, res) => {
   try {
     const issuedTickets = await client.query("SELECT COUNT(*) FROM tickets");
 
