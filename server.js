@@ -68,7 +68,7 @@ app.put("/tickets/:id", async (req, res) => {
   const updatedRecord = req.body;
   try {
     await client.query(
-      `UPDATE tickets SET ticket_id=$1, name=$2, type=$3, date=$4, total=$5, status=$6, plate_no=$7 WHERE id=$8`,
+      `UPDATE tickets SET ticket_id=$1, name=$2, type=$3, date=$4, total=$5, status=$6, plate=$7 WHERE id=$8`,
       [
         updatedRecord.ticket_id,
         updatedRecord.name,
@@ -76,7 +76,7 @@ app.put("/tickets/:id", async (req, res) => {
         updatedRecord.date,
         updatedRecord.total,
         updatedRecord.status,
-        updatedRecord.plate_no,
+        updatedRecord.plate,
 
         id,
       ],
