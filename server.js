@@ -110,3 +110,42 @@ app.get("/dashboard-stats", async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
+
+//dashboard chart api
+app.get("/dashboard-violations-trend", async (req, res) => {
+  try {
+    // Daily violations (group by day)
+    const daily = await client.query(`
+      SELECT 
+        date AS day,
+        COUNT(*) AS violations
+      FROM tickets
+      GROUP BY day
+      ORDER BY day ASC
+    `);
+
+    // Weekly violations (group by week start)
+    const weekly = await client.query(`
+      SELECT 
+        DATE_TRUNC('week', date) AS week,
+        COUNT(*) AS violations
+      FROM tickets
+      GROUP BY week
+      ORDER BY week ASC
+    `);
+
+    res.json({
+      daily: daily.rows.map((r) => ({
+        day: r.day,
+        violations: Number(r.violations),
+      })),
+      weekly: weekly.rows.map((r) => ({
+        week: r.week,
+        violations: Number(r.violations),
+      })),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Database error" });
+  }
+});
