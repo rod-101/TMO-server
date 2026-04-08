@@ -191,3 +191,16 @@ app.get("/dashboard-stats", async (req, res) => {
     res.status(500).json({ error: "Database error" });
   }
 });
+
+// Recent violations endpoint
+app.get("/recent-violations", async (req, res) => {
+  try {
+    const result = await client.query(
+      "SELECT id, ticket_id, name, type, date, total, status, plate FROM tickets ORDER BY date DESC LIMIT 10",
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Database error" });
+  }
+});
