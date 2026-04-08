@@ -1,13 +1,22 @@
 import express from "express";
 import cors from "cors";
+import { createServer } from "http";
+import { Server } from "socket.io";
 import { client } from "./db.js";
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"],
+  },
+});
+
 app.use(express.json());
-// const PORT = process.env.LOCALPORT;
 app.use(cors());
 
-app.listen(process.env.PORT, () => {
+server.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
 });
 
@@ -82,6 +91,8 @@ app.put("/tickets/:id", async (req, res) => {
       ],
     );
     res.json({ success: true });
+    // Emit update to all connected clients
+    io.emit("data-update");
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Database update failed" });
