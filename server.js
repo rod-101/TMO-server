@@ -112,25 +112,24 @@ app.get("/dashboard-stats", async (req, res) => {
 });
 
 //dashboard chart api
+// Fix: truncate timestamp to day for proper grouping
 app.get("/dashboard-violations-trend", async (req, res) => {
   try {
-    // Daily violations (group by day)
     const daily = await client.query(`
       SELECT 
-        date AS day,
+        DATE_TRUNC('day', date) AS day,
         COUNT(*) AS violations
       FROM tickets
-      GROUP BY day
+      GROUP BY DATE_TRUNC('day', date)
       ORDER BY day ASC
     `);
 
-    // Weekly violations (group by week start)
     const weekly = await client.query(`
       SELECT 
         DATE_TRUNC('week', date) AS week,
         COUNT(*) AS violations
       FROM tickets
-      GROUP BY week
+      GROUP BY DATE_TRUNC('week', date)
       ORDER BY week ASC
     `);
 
@@ -143,6 +142,31 @@ app.get("/dashboard-violations-trend", async (req, res) => {
         week: r.week,
         violations: Number(r.violations),
       })),
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+// Stats endpoint (if not already correct)
+app.get("/dashboard-stats", async (req, res) => {
+  try {
+    const issued = await client.query(`SELECT COUNT(*) FROM tickets`);
+
+    const unresolved = await client.query(`
+      SELECT COUNT(*) FROM tickets WHERE status = 'unresolved'
+    `);
+
+    const newTickets = await client.query(`
+      SELECT COUNT(*) FROM tickets 
+      WHERE date >= NOW() - INTERVAL '7 days'
+    `);
+
+    res.json({
+      issued: Number(issued.rows[0].count),
+      unresolved: Number(unresolved.rows[0].count),
+      new: Number(newTickets.rows[0].count),
     });
   } catch (error) {
     console.error(error);
