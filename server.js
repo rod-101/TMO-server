@@ -146,19 +146,45 @@ app.get("/dashboard-stats", async (req, res) => {
       SELECT COUNT(*) FROM tickets WHERE LOWER(status) = 'unresolved'
     `);
 
+    const resolved = await client.query(`
+      SELECT COUNT(*) FROM tickets WHERE LOWER(status) = 'resolved'
+    `);
+
+    const repeatOffenders = await client.query(`
+      SELECT COUNT(*) FROM (
+        SELECT LOWER(TRIM(COALESCE(plate, ''))) AS plate
+        FROM tickets
+        GROUP BY LOWER(TRIM(COALESCE(plate, '')))
+        HAVING COUNT(*) > 1
+      ) AS repeat_plates
+    `);
+
+    const uniqueOffenders = await client.query(`
+      SELECT COUNT(DISTINCT LOWER(TRIM(COALESCE(plate, '')))) FROM tickets
+    `);
+
     const newTickets = await client.query(`
       SELECT COUNT(*) FROM tickets 
       WHERE date >= CURRENT_DATE - INTERVAL '7 days'
     `);
 
-    console.log("Issued:", issued.rows[0].count);
-    console.log("Unresolved:", unresolved.rows[0].count);
-    console.log("New:", newTickets.rows[0].count);
+    const totalIssued = Number(issued.rows[0].count);
+    const totalUniqueOffenders = Number(uniqueOffenders.rows[0].count);
+    const repeatOffenderRate =
+      totalUniqueOffenders === 0
+        ? 0
+        : (Number(repeatOffenders.rows[0].count) / totalUniqueOffenders) * 100;
+    const resolutionRate =
+      totalIssued === 0
+        ? 0
+        : (Number(resolved.rows[0].count) / totalIssued) * 100;
 
     res.json({
-      issued: Number(issued.rows[0].count),
+      issued: totalIssued,
       unresolved: Number(unresolved.rows[0].count),
       new: Number(newTickets.rows[0].count),
+      repeatOffenderRate,
+      resolutionRate,
     });
   } catch (error) {
     console.error(error);
