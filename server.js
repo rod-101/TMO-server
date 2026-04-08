@@ -97,7 +97,7 @@ app.get("/dashboard-stats", async (req, res) => {
     );
 
     const newTickets = await client.query(
-      "SELECT COUNT(*) FROM tickets WHERE date = CURRENT_DATE",
+      "SELECT COUNT(*) FROM tickets WHERE date >= CURRENT_DATE - 7;",
     );
 
     res.json({
