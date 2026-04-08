@@ -88,29 +88,6 @@ app.put("/tickets/:id", async (req, res) => {
   }
 });
 
-app.get("/dashboard-stats", async (req, res) => {
-  try {
-    const issuedTickets = await client.query("SELECT COUNT(*) FROM tickets");
-
-    const unresolvedTickets = await client.query(
-      "SELECT COUNT(*) FROM tickets WHERE status = 'unresolved'",
-    );
-
-    const newTickets = await client.query(
-      "SELECT COUNT(*) FROM tickets WHERE date >= CURRENT_DATE - 7;",
-    );
-
-    res.json({
-      issued: issuedTickets.rows[0].count,
-      unresolved: unresolvedTickets.rows[0].count,
-      new: newTickets.rows[0].count,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Database error" });
-  }
-});
-
 //dashboard chart api
 // Fix: truncate timestamp to day for proper grouping
 app.get("/dashboard-violations-trend", async (req, res) => {
@@ -155,13 +132,17 @@ app.get("/dashboard-stats", async (req, res) => {
     const issued = await client.query(`SELECT COUNT(*) FROM tickets`);
 
     const unresolved = await client.query(`
-      SELECT COUNT(*) FROM tickets WHERE status = 'unresolved'
+      SELECT COUNT(*) FROM tickets WHERE LOWER(status) = 'unresolved'
     `);
 
     const newTickets = await client.query(`
       SELECT COUNT(*) FROM tickets 
-      WHERE date >= NOW() - INTERVAL '7 days'
+      WHERE date >= CURRENT_DATE - INTERVAL '7 days'
     `);
+
+    console.log("Issued:", issued.rows[0].count);
+    console.log("Unresolved:", unresolved.rows[0].count);
+    console.log("New:", newTickets.rows[0].count);
 
     res.json({
       issued: Number(issued.rows[0].count),
